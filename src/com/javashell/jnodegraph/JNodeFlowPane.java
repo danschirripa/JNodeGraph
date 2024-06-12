@@ -24,6 +24,7 @@ import javax.swing.KeyStroke;
 import com.javashell.jnodegraph.JNodeComponent.NodePoint;
 
 public class JNodeFlowPane extends JComponent {
+	private static final long serialVersionUID = -4163272461603981518L;
 	private boolean isLinking = false;
 	private JNodeComponent currentLinkage = null, currentMove = null;
 	private Hashtable<JNodeComponent, HashSet<Linkage>> links;
@@ -35,7 +36,9 @@ public class JNodeFlowPane extends JComponent {
 		addMouseListener(actionListener);
 		addMouseMotionListener(actionListener);
 		getInputMap().put(KeyStroke.getKeyStroke("DELETE"), "delete");
+		getInputMap().put(KeyStroke.getKeyStroke("BACK_SPACE"), "delete"); 
 		getActionMap().put("delete", new AbstractAction() {
+			private static final long serialVersionUID = 7750679448158046120L;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
