@@ -25,7 +25,7 @@ public abstract class JNodeComponent extends JComponent {
 	private NodeType type = NodeType.Transceiver;
 	private final HashSet<NodePoint> nodePoints;
 
-	private Font calibri = new Font("Calibi", Font.BOLD, 12);
+	private Font calibri = new Font("Calibi", Font.BOLD, 10);
 	private String nodeName = "Node";
 
 	public JNodeComponent(JNodeFlowPane flow) {
@@ -36,11 +36,12 @@ public abstract class JNodeComponent extends JComponent {
 			addMouseListener(nal);
 			addMouseMotionListener(nal);
 		}
-		setSize(80, 65);
+		setSize(90, 65);
 	}
 
 	public void setNodeName(String name) {
 		this.nodeName = name;
+		this.setToolTipText(name);
 	}
 
 	public void setNodeType(NodeType type) {
@@ -198,6 +199,7 @@ public abstract class JNodeComponent extends JComponent {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
+			flow.stopMoving();
 		}
 
 		@Override
