@@ -15,6 +15,7 @@ import java.awt.geom.RoundRectangle2D;
 import java.util.HashSet;
 
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 
 import com.javashell.jnodegraph.exceptions.IncorrectLinkageException;
 
@@ -44,6 +45,10 @@ public abstract class JNodeComponent extends JComponent {
 		this.setToolTipText(name);
 	}
 
+	public String getNodeName() {
+		return nodeName;
+	}
+
 	public void setNodeType(NodeType type) {
 		this.type = type;
 	}
@@ -67,9 +72,9 @@ public abstract class JNodeComponent extends JComponent {
 		g.drawString(nodeName, 5, 15);
 	}
 
-	public abstract void addOriginLinkage(JNodeComponent origin) throws IncorrectLinkageException;
+	public abstract void addOriginLinkage(JNodeComponent origin, boolean cascade) throws IncorrectLinkageException;
 
-	public abstract void addChildLinkage(JNodeComponent child) throws IncorrectLinkageException;
+	public abstract void addChildLinkage(JNodeComponent child, boolean cascade) throws IncorrectLinkageException;
 
 	public abstract void removeChildLinkage(JNodeComponent child);
 
@@ -180,6 +185,7 @@ public abstract class JNodeComponent extends JComponent {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
+			flow.setSelected(thisNode);
 		}
 
 		@Override
@@ -248,6 +254,9 @@ public abstract class JNodeComponent extends JComponent {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
+			if (SwingUtilities.isRightMouseButton(e) && getComponentPopupMenu() != null) {
+				getComponentPopupMenu().show(thisNode, e.getX(), e.getY());
+			}
 		}
 
 		@Override

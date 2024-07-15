@@ -15,11 +15,11 @@ public class MainTest {
 		JNodeComponent test1 = new JNodeComponent(flowPane) {
 
 			@Override
-			public void addOriginLinkage(JNodeComponent origin) {
+			public void addOriginLinkage(JNodeComponent origin, boolean cascade) {
 			}
 
 			@Override
-			public void addChildLinkage(JNodeComponent child) {
+			public void addChildLinkage(JNodeComponent child, boolean cascade) {
 			}
 
 			@Override
@@ -34,11 +34,11 @@ public class MainTest {
 		JNodeComponent test2 = new JNodeComponent(flowPane) {
 
 			@Override
-			public void addOriginLinkage(JNodeComponent origin) {
+			public void addOriginLinkage(JNodeComponent origin, boolean cascade) {
 			}
 
 			@Override
-			public void addChildLinkage(JNodeComponent child) {
+			public void addChildLinkage(JNodeComponent child, boolean cascade) {
 			}
 
 			@Override

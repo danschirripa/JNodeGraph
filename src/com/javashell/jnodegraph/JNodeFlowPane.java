@@ -18,15 +18,17 @@ import java.util.HashSet;
 import java.util.Hashtable;
 
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 import com.javashell.jnodegraph.JNodeComponent.NodePoint;
 
 public class JNodeFlowPane extends JComponent {
 	private static final long serialVersionUID = -4163272461603981518L;
 	private boolean isLinking = false;
-	private JNodeComponent currentLinkage = null, currentMove = null;
+	private JNodeComponent currentLinkage = null, currentMove = null, currentSelection = null;
 	private Hashtable<JNodeComponent, HashSet<Linkage>> links;
 	private Linkage selectedLinkage = null;
 
@@ -36,7 +38,7 @@ public class JNodeFlowPane extends JComponent {
 		addMouseListener(actionListener);
 		addMouseMotionListener(actionListener);
 		getInputMap().put(KeyStroke.getKeyStroke("DELETE"), "delete");
-		getInputMap().put(KeyStroke.getKeyStroke("BACK_SPACE"), "delete"); 
+		getInputMap().put(KeyStroke.getKeyStroke("BACK_SPACE"), "delete");
 		getActionMap().put("delete", new AbstractAction() {
 			private static final long serialVersionUID = 7750679448158046120L;
 
@@ -60,18 +62,20 @@ public class JNodeFlowPane extends JComponent {
 			// Linkages stored with transmitter as key, receivers as value set
 			try {
 				if (linkTerminator.getNodeType() == NodeType.Transmitter
-						|| linkTerminator.getNodeType() == NodeType.Transceiver) {
+						|| (linkTerminator.getNodeType() == NodeType.Transceiver
+								&& currentLinkage.getNodeType() != NodeType.Transmitter)) {
 					if (!links.containsKey(linkTerminator)) {
 						links.put(linkTerminator, new HashSet<>());
 					}
+
 					links.get(linkTerminator).add(new Linkage(currentLinkage, new Path2D.Float(), linkTerminator));
-					linkTerminator.addChildLinkage(currentLinkage);
-				} else if (linkTerminator.getNodeType() == NodeType.Receiver) {
+					linkTerminator.addChildLinkage(currentLinkage, true);
+				} else {
 					if (!links.containsKey(currentLinkage)) {
 						links.put(currentLinkage, new HashSet<>());
 					}
 					links.get(currentLinkage).add(new Linkage(linkTerminator, new Path2D.Float(), currentLinkage));
-					currentLinkage.addChildLinkage(linkTerminator);
+					currentLinkage.addChildLinkage(linkTerminator, true);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -108,6 +112,20 @@ public class JNodeFlowPane extends JComponent {
 
 	public void stopMoving() {
 		currentMove = null;
+	}
+
+	public void setSelected(JNodeComponent selected) {
+		this.currentSelection = selected;
+		currentSelection.setBorder(BorderFactory.createLineBorder(Color.RED, 2, true));
+	}
+
+	public JNodeComponent getSelection() {
+		return currentSelection;
+	}
+
+	public void clearSelection() {
+		this.currentSelection.setBorder(null);
+		this.currentSelection = null;
 	}
 
 	public boolean isLinking() {
@@ -205,6 +223,11 @@ public class JNodeFlowPane extends JComponent {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
+			if (SwingUtilities.isRightMouseButton(e)) {
+
+			} else {
+				clearSelection();
+			}
 		}
 
 		@Override
