@@ -1,6 +1,7 @@
 package com.javashell.jnodegraph;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -99,6 +100,7 @@ public abstract class JNodeComponent extends JComponent {
 			addMouseListener(inputNal);
 			addMouseListener(outputNal);
 			parent.addNodePoint(this);
+			this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 			this.parent = parent;
 		}
 
@@ -290,6 +292,7 @@ public abstract class JNodeComponent extends JComponent {
 
 		@Override
 		public void mouseExited(MouseEvent e) {
+			
 		}
 
 		public boolean isInBounds(Point p) {

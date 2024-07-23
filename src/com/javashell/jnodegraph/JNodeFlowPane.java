@@ -115,6 +115,8 @@ public class JNodeFlowPane extends JComponent {
 	}
 
 	public void setSelected(JNodeComponent selected) {
+		if (this.currentSelection != null)
+			this.currentSelection.setBorder(null);
 		this.currentSelection = selected;
 		currentSelection.setBorder(BorderFactory.createLineBorder(Color.RED, 2, true));
 	}
@@ -124,8 +126,10 @@ public class JNodeFlowPane extends JComponent {
 	}
 
 	public void clearSelection() {
-		this.currentSelection.setBorder(null);
-		this.currentSelection = null;
+		if (this.currentSelection != null) {
+			this.currentSelection.setBorder(null);
+			this.currentSelection = null;
+		}
 	}
 
 	public boolean isLinking() {
