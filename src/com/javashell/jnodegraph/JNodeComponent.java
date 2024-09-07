@@ -81,11 +81,16 @@ public abstract class JNodeComponent extends JComponent {
 
 	public abstract void removeOriginLinkage(JNodeComponent origin);
 
+	public Color getLinkColor() {
+		return Color.BLACK;
+	}
+
 	public abstract class NodePoint extends JNodeComponent {
 		private final RoundRectangle2D.Float inputPoint, outputPoint;
 		private NodePointActionListener inputNal, outputNal;
 		private JNodeComponent parent;
 		private boolean linkingInput = false, linkingOutput = false;
+		private Color color;
 
 		public NodePoint(JNodeFlowPane flow, JNodeComponent parent) {
 			super(flow);
@@ -106,6 +111,15 @@ public abstract class JNodeComponent extends JComponent {
 
 		public JNodeComponent getParentNodeComponent() {
 			return parent;
+		}
+
+		public void setColor(Color color) {
+			this.color = color;
+		}
+
+		@Override
+		public Color getLinkColor() {
+			return color;
 		}
 
 		public void setLinkingOutput(boolean linking) {
@@ -146,18 +160,18 @@ public abstract class JNodeComponent extends JComponent {
 				// Add node points to either side (input and output)
 				g2.draw(inputPoint);
 				g2.draw(outputPoint);
-				g2.setColor(Color.GRAY);
+				g2.setColor(color);
 				g2.fill(inputPoint);
 				g2.fill(outputPoint);
 			} else if (this.getNodeType() == NodeType.Transmitter) {
 				// Add node points to right side only (output)
 				g2.draw(outputPoint);
-				g2.setColor(Color.GRAY);
+				g2.setColor(color);
 				g2.fill(outputPoint);
 			} else {
 				// Add node points to left side only (input)
 				g2.draw(inputPoint);
-				g2.setColor(Color.GRAY);
+				g2.setColor(color);
 				g2.fill(inputPoint);
 			}
 			g2.setColor(original);
@@ -286,17 +300,17 @@ public abstract class JNodeComponent extends JComponent {
 		public void mouseEntered(MouseEvent e) {
 			if (isInBounds(e.getPoint())) {
 				// Change cursor to "Plus" to indicate option to create a linkage
-				System.out.println("IN BOUNDS");
+				// System.out.println("IN BOUNDS");
 			}
 		}
 
 		@Override
 		public void mouseExited(MouseEvent e) {
-			
+
 		}
 
 		public boolean isInBounds(Point p) {
-			System.out.println(p.x + " " + p.y);
+			// System.out.println(p.x + " " + p.y);
 			if (p.x >= bounds.x && p.x <= (bounds.x + bounds.width) && p.y >= bounds.y
 					&& p.y <= (bounds.y + bounds.height))
 				return true;

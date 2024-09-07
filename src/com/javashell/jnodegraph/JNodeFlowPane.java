@@ -185,16 +185,27 @@ public class JNodeFlowPane extends JComponent {
 		while (keys.hasMoreElements()) {
 			JNodeComponent key = keys.nextElement();
 			int startX, startY;
-			startX = key.getX();
-			startY = key.getY() + (key.getHeight() / 2);
+
+			if (key instanceof JNodeComponent.NodePoint) {
+				startX = ((JNodeComponent.NodePoint) key).getParentNodeComponent().getX() + key.getX();
+				startY = ((JNodeComponent.NodePoint) key).getParentNodeComponent().getY() + key.getY();
+			} else {
+				startX = key.getX();
+				startY = key.getY() + (key.getHeight() / 2);
+			}
 			HashSet<Linkage> linkages = links.get(key);
 			for (Linkage link : linkages) {
 				link.link = new Path2D.Float();
 				link.link.moveTo(startX, startY);
 				int endX = link.node.getX();
 				int endY = link.node.getY() + (link.node.getHeight() / 2);
+				if (link.node instanceof JNodeComponent.NodePoint) {
+					endX = ((JNodeComponent.NodePoint) link.node).getParentNodeComponent().getX() + link.node.getX();
+					endY = ((JNodeComponent.NodePoint) link.node).getParentNodeComponent().getY() + link.node.getY();
+				}
 				link.link.lineTo(endX, endY);
 				link.link.closePath();
+				g2.setColor(key.getLinkColor());
 				if (selectedLinkage == link) {
 					g2.setColor(Color.RED);
 				}
