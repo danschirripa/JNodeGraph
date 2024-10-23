@@ -14,6 +14,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.HashSet;
+import java.util.UUID;
 
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
@@ -26,6 +27,7 @@ public abstract class JNodeComponent extends JComponent {
 	private JNodeFlowPane flow;
 	private NodeType type = NodeType.Transceiver;
 	private final HashSet<NodePoint> nodePoints;
+	private final UUID uuid = UUID.randomUUID();
 
 	private Font calibri = new Font("Calibi", Font.BOLD, 10);
 	private String nodeName = "Node";
@@ -39,6 +41,10 @@ public abstract class JNodeComponent extends JComponent {
 			addMouseMotionListener(nal);
 		}
 		setSize(90, 65);
+	}
+
+	public UUID getUUID() {
+		return uuid;
 	}
 
 	public void setNodeName(String name) {

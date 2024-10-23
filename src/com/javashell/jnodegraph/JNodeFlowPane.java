@@ -24,6 +24,7 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import com.javashell.jnodegraph.JNodeComponent.NodePoint;
+import com.javashell.jnodegraph.exceptions.IncorrectLinkageException;
 
 public class JNodeFlowPane extends JComponent {
 	private static final long serialVersionUID = -4163272461603981518L;
@@ -50,6 +51,15 @@ public class JNodeFlowPane extends JComponent {
 				}
 			}
 		});
+	}
+
+	public void createLinkage(JNodeComponent origin, JNodeComponent child) throws IncorrectLinkageException {
+		if (!links.containsKey(origin)) {
+			links.put(origin, new HashSet<>());
+		}
+
+		links.get(origin).add(new Linkage(child, new Path2D.Float(), origin));
+		origin.addChildLinkage(child, true);
 	}
 
 	public void startLinkage(JNodeComponent origin) {
@@ -96,6 +106,10 @@ public class JNodeFlowPane extends JComponent {
 			((NodePoint) currentLinkage).setLinkingOutput(false);
 		}
 		currentLinkage = null;
+	}
+
+	public Hashtable<JNodeComponent, HashSet<Linkage>> getLinkages() {
+		return links;
 	}
 
 	public void removeLinkage(Linkage link) {
@@ -215,7 +229,7 @@ public class JNodeFlowPane extends JComponent {
 		}
 	}
 
-	private class Linkage {
+	public class Linkage {
 		private JNodeComponent node, origin;
 		private Path2D link;
 
@@ -223,6 +237,14 @@ public class JNodeFlowPane extends JComponent {
 			this.node = node;
 			this.link = link;
 			this.origin = origin;
+		}
+
+		public JNodeComponent getNode() {
+			return node;
+		}
+
+		public JNodeComponent getOrigin() {
+			return origin;
 		}
 	}
 
