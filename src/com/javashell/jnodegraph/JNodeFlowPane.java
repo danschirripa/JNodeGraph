@@ -203,6 +203,9 @@ public class JNodeFlowPane extends JComponent {
 			if (key instanceof JNodeComponent.NodePoint) {
 				startX = ((JNodeComponent.NodePoint) key).getParentNodeComponent().getX() + key.getX();
 				startY = ((JNodeComponent.NodePoint) key).getParentNodeComponent().getY() + key.getY();
+				if (key.getNodeType() != NodeType.Receiver) {
+					startX = startX + key.getWidth();
+				}
 			} else {
 				startX = key.getX();
 				startY = key.getY() + (key.getHeight() / 2);
