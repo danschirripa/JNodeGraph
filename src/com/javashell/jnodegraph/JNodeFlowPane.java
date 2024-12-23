@@ -3,6 +3,7 @@ package com.javashell.jnodegraph;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -32,6 +33,7 @@ public class JNodeFlowPane extends JComponent {
 	private JNodeComponent currentLinkage = null, currentMove = null, currentSelection = null;
 	private Hashtable<JNodeComponent, HashSet<Linkage>> links;
 	private Linkage selectedLinkage = null;
+	private boolean debugLinkages = false;
 
 	public JNodeFlowPane() {
 		links = new Hashtable<>();
@@ -73,7 +75,7 @@ public class JNodeFlowPane extends JComponent {
 			try {
 				if (linkTerminator.getNodeType() == NodeType.Transmitter
 						|| (linkTerminator.getNodeType() == NodeType.Transceiver
-								&& currentLinkage.getNodeType() != NodeType.Transmitter)) {
+								&& currentLinkage.getNodeType() == NodeType.Receiver)) {
 					if (!links.containsKey(linkTerminator)) {
 						links.put(linkTerminator, new HashSet<>());
 					}
@@ -222,7 +224,12 @@ public class JNodeFlowPane extends JComponent {
 				}
 				link.link.lineTo(endX, endY);
 				link.link.closePath();
-				g2.setColor(key.getLinkColor());
+				GradientPaint gp = new GradientPaint(startX, startY, Color.RED, endX, endY, Color.BLUE);
+				if (debugLinkages)
+					g2.setPaint(gp);
+				else
+					g2.setColor(key.getLinkColor());
+
 				if (selectedLinkage == link) {
 					g2.setColor(Color.RED);
 				}
@@ -230,6 +237,10 @@ public class JNodeFlowPane extends JComponent {
 				g2.setColor(originalColor);
 			}
 		}
+	}
+
+	public void setDebugLinkages(boolean doDebug) {
+		debugLinkages = doDebug;
 	}
 
 	public class Linkage {
