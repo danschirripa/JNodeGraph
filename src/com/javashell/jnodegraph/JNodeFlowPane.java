@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.Enumeration;
@@ -60,7 +61,7 @@ public class JNodeFlowPane extends JComponent {
 			links.put(origin, new HashSet<>());
 		}
 
-		links.get(origin).add(new Linkage(child, new Path2D.Float(), origin));
+		links.get(origin).add(new Linkage(child, new CubicCurve2D.Float(), origin));
 		origin.addChildLinkage(child, true);
 	}
 
@@ -80,13 +81,15 @@ public class JNodeFlowPane extends JComponent {
 						links.put(linkTerminator, new HashSet<>());
 					}
 
-					links.get(linkTerminator).add(new Linkage(currentLinkage, new Path2D.Float(), linkTerminator));
+					links.get(linkTerminator)
+							.add(new Linkage(currentLinkage, new CubicCurve2D.Float(), linkTerminator));
 					linkTerminator.addChildLinkage(currentLinkage, true);
 				} else {
 					if (!links.containsKey(currentLinkage)) {
 						links.put(currentLinkage, new HashSet<>());
 					}
-					links.get(currentLinkage).add(new Linkage(linkTerminator, new Path2D.Float(), currentLinkage));
+					links.get(currentLinkage)
+							.add(new Linkage(linkTerminator, new CubicCurve2D.Float(), currentLinkage));
 					currentLinkage.addChildLinkage(linkTerminator, true);
 				}
 			} catch (Exception e) {
@@ -209,21 +212,21 @@ public class JNodeFlowPane extends JComponent {
 					startX = startX + key.getWidth();
 				}
 			} else {
-				startX = key.getX();
+				startX = key.getX() + key.getWidth();
 				startY = key.getY() + (key.getHeight() / 2);
 			}
 			HashSet<Linkage> linkages = links.get(key);
 			for (Linkage link : linkages) {
-				link.link = new Path2D.Float();
-				link.link.moveTo(startX, startY);
+				link.link = new CubicCurve2D.Float();
 				int endX = link.node.getX();
 				int endY = link.node.getY() + (link.node.getHeight() / 2);
 				if (link.node instanceof JNodeComponent.NodePoint) {
 					endX = ((JNodeComponent.NodePoint) link.node).getParentNodeComponent().getX() + link.node.getX();
 					endY = ((JNodeComponent.NodePoint) link.node).getParentNodeComponent().getY() + link.node.getY();
 				}
-				link.link.lineTo(endX, endY);
-				link.link.closePath();
+				int diffX = endX - startX;
+				int diffY = endY - startY;
+				link.link.setCurve(startX, startY, startX + (diffX / 3), startY, endX - (diffX / 3), endY, endX, endY);
 				GradientPaint gp = new GradientPaint(startX, startY, Color.RED, endX, endY, Color.BLUE);
 				if (debugLinkages)
 					g2.setPaint(gp);
@@ -245,9 +248,9 @@ public class JNodeFlowPane extends JComponent {
 
 	public class Linkage {
 		private JNodeComponent node, origin;
-		private Path2D link;
+		private CubicCurve2D link;
 
-		public Linkage(JNodeComponent node, Path2D link, JNodeComponent origin) {
+		public Linkage(JNodeComponent node, CubicCurve2D link, JNodeComponent origin) {
 			this.node = node;
 			this.link = link;
 			this.origin = origin;
