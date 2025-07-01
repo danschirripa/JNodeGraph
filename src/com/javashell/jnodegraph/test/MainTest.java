@@ -12,7 +12,7 @@ public class MainTest {
 		JNodeFlowPane flowPane = new JNodeFlowPane();
 		testFrame.setContentPane(flowPane);
 
-		JNodeComponent test1 = new JNodeComponent(flowPane) {
+		JNodeComponent test1 = new JNodeComponent(flowPane, Object.class) {
 
 			@Override
 			public void addOriginLinkage(JNodeComponent origin, boolean cascade) {
@@ -31,7 +31,7 @@ public class MainTest {
 			}
 
 		};
-		JNodeComponent test2 = new JNodeComponent(flowPane) {
+		JNodeComponent test2 = new JNodeComponent(flowPane, Object.class) {
 
 			@Override
 			public void addOriginLinkage(JNodeComponent origin, boolean cascade) {

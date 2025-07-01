@@ -5,13 +5,13 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.HashSet;
 import java.util.UUID;
@@ -22,6 +22,8 @@ import javax.swing.SwingUtilities;
 import com.javashell.jnodegraph.exceptions.IncorrectLinkageException;
 
 public abstract class JNodeComponent extends JComponent {
+	private static final long serialVersionUID = 1L;
+
 	private int padding = 10;
 	private NodeActionListener nal;
 	private JNodeFlowPane flow;
@@ -29,10 +31,16 @@ public abstract class JNodeComponent extends JComponent {
 	private final HashSet<NodePoint> nodePoints;
 	private final UUID uuid = UUID.randomUUID();
 
-	private Font calibri = new Font("Calibi", Font.BOLD, 10);
+	private Image icon = null;
+
+	private Font calibri = new Font("Calibri", Font.BOLD, 10);
 	private String nodeName = "Node";
 
-	public JNodeComponent(JNodeFlowPane flow) {
+	private final Class<?> objClass;
+
+	public JNodeComponent(JNodeFlowPane flow, Class<?> objClass) {
+		this.objClass = objClass;
+
 		nal = new NodeActionListener(this);
 		this.flow = flow;
 		this.nodePoints = new HashSet<>();
@@ -41,6 +49,10 @@ public abstract class JNodeComponent extends JComponent {
 			addMouseMotionListener(nal);
 		}
 		setSize(90, 65);
+	}
+
+	public Class<?> getObjectClass() {
+		return objClass;
 	}
 
 	public UUID getUUID() {
@@ -56,6 +68,14 @@ public abstract class JNodeComponent extends JComponent {
 		return nodeName;
 	}
 
+	public void setIcon(Image icon) {
+		this.icon = icon;
+	}
+
+	public Image getIcon() {
+		return icon;
+	}
+
 	public void setNodeType(NodeType type) {
 		this.type = type;
 	}
@@ -63,7 +83,12 @@ public abstract class JNodeComponent extends JComponent {
 	public void addNodePoint(NodePoint point) {
 		setSize(getWidth(), getHeight() + point.getHeight());
 		point.setBounds(0, getHeight() - point.getHeight(), point.getWidth(), point.getHeight());
+		nodePoints.add(point);
 		add(point);
+	}
+
+	public HashSet<NodePoint> getNodePoints() {
+		return nodePoints;
 	}
 
 	public NodeType getNodeType() {
@@ -75,6 +100,19 @@ public abstract class JNodeComponent extends JComponent {
 		g.setFont(calibri);
 		g.setColor(Color.LIGHT_GRAY);
 		g.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+
+		if (icon != null) {
+			int iconW, iconH;
+			if (getWidth() > getHeight()) {
+				iconW = getHeight() / 3;
+				iconH = getHeight() / 3;
+			} else {
+				iconW = getWidth() / 3;
+				iconH = getWidth() / 3;
+			}
+			g.drawImage(icon, 5, 15, iconW, iconH, this);
+		}
+
 		g.setColor(Color.black);
 		g.drawString(nodeName, 5, 15);
 	}
@@ -91,15 +129,15 @@ public abstract class JNodeComponent extends JComponent {
 		return Color.BLACK;
 	}
 
-	public abstract class NodePoint extends JNodeComponent {
+	public static abstract class NodePoint extends JNodeComponent {
 		private final RoundRectangle2D.Float inputPoint, outputPoint;
 		private NodePointActionListener inputNal, outputNal;
 		private JNodeComponent parent;
 		private boolean linkingInput = false, linkingOutput = false;
 		private Color color;
 
-		public NodePoint(JNodeFlowPane flow, JNodeComponent parent) {
-			super(flow);
+		public NodePoint(JNodeFlowPane flow, JNodeComponent parent, Class<?> objClass) {
+			super(flow, objClass);
 			setSize(parent.getWidth(), 10);
 			inputPoint = new RoundRectangle2D.Float(2, 0, getWidth() / 4, getHeight() - 2, 2, 2);
 			outputPoint = new RoundRectangle2D.Float(getWidth() - (inputPoint.width) - 2, 1, getWidth() / 4,

@@ -57,6 +57,9 @@ public class JNodeFlowPane extends JComponent {
 	}
 
 	public void createLinkage(JNodeComponent origin, JNodeComponent child) throws IncorrectLinkageException {
+		if (origin.getObjectClass() != child.getObjectClass()) {
+			return;
+		}
 		if (!links.containsKey(origin)) {
 			links.put(origin, new HashSet<>());
 		}
@@ -71,6 +74,9 @@ public class JNodeFlowPane extends JComponent {
 	}
 
 	public void stopLinkage(JNodeComponent linkTerminator) {
+		if (linkTerminator.getObjectClass() != currentLinkage.getObjectClass()) {
+			return;
+		}
 		if (isLinking && currentLinkage != linkTerminator) {
 			// Linkages stored with transmitter as key, receivers as value set
 			try {
